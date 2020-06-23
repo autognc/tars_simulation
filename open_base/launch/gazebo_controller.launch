@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<launch>
+
+	<include file="$(find open_base)/launch/parameter.launch"/>
+	<arg
+		name="debug"
+		default="false"
+	/>
+	<arg
+		name="gui"
+		default="true"
+	/>
+	<arg
+		name="headless"
+		default="false"
+	/>
+	<arg
+		name="paused"
+		default="true"
+	/>
+	<arg
+		name="use_sim_time"
+		default="true"
+	/>
+	<arg
+		name="x"
+		default="2"
+	/>
+	<arg
+		name="y"
+		default="0"
+	/>
+	<arg
+		name="height"
+		default="0"
+	/>
+	<arg
+		name="yaw"
+		default="-0.52359877559
+"
+	/>
+	<include file="$(find gazebo_ros)/launch/empty_world.launch">
+
+		<arg
+			name="debug"
+			value="$(arg debug)"
+		/>
+		<arg
+			name="gui"
+			value="$(arg gui)"
+		/>
+		<arg
+			name="paused"
+			value="$(arg paused)"
+		/>
+		<arg
+			name="use_sim_time"
+			value="$(arg use_sim_time)"
+		/>
+		<arg
+			name="headless"
+			value="$(arg headless)"
+		/>
+		<arg
+			name="world_name"
+			value="worlds/empty_world.world"
+		/>
+		<!--	value="$(find omni_circle)/worlds/f35_world.world" -->
+
+		<!--arg
+			name="physics"
+			value="simbody"
+		/-->
+
+	</include>
+	<node
+		name="open_base_spawner"
+		pkg="gazebo_ros"
+		type="spawn_model"
+		args="-urdf -model robot -param robot_description -model open_base -x $(arg x) -y $(arg y) -z $(arg height) -Y $(arg yaw)"
+		ns="open_base"
+	/>
+	<node
+		name="robot_state_publisher"
+		pkg="robot_state_publisher"
+		type="robot_state_publisher"
+		respawn="false"
+		output="screen"
+		ns="open_base"
+	>
+
+		<param
+			name="publish_frequency"
+			type="double"
+			value="30.0"
+		/>
+
+		<remap
+			from="/joint_states"
+			to="/open_base/joint_states"
+		/>
+
+	</node>
+
+</launch>
